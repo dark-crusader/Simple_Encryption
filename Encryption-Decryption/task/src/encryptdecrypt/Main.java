@@ -21,6 +21,7 @@ public class Main {
 
 
     public String operate(String op, String text, int key) {
+        
         if(op.equals("enc")) {
             return encrypt(text, key);
         } else if(op.equals("dec")) {
