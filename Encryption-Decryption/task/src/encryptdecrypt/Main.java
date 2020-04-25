@@ -1,14 +1,14 @@
 package encryptdecrypt;
 
+import java.io.*;
+import java.util.Scanner;
 
 public class Main {
-    // Auxiliary to check for alphabetic input
     @Deprecated
     private static boolean isAlpha(char c) {
         return c >= 'a' && c <= 'z';
     }
 
-    //Function used for rolling encryption and decryption
     private static String encrypt(String text, int key) {
         char[] input = text.toCharArray();
         char[] res = new char[text.length()];
@@ -20,34 +20,76 @@ public class Main {
         return String.valueOf(res);
     }
 
-    public static void main(String[] args) {
-
-        // Default arguments provided.
-        String op = "enc";
-        int key = 0;
-        String text = "";
-        for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-mode")) {
-                op = args[i + 1];
-            } else if (args[i].equals("-key")) {
-                key = Integer.parseInt(args[i + 1]);
-            } else if (args[i].equals("-data")) {
-                text = args[i + 1];
+    private static String readFromFile(File f) {
+        String res = "";
+        try (Scanner sc = new Scanner(f)) {
+            while (sc.hasNextLine()) {
+                res += sc.nextLine();
             }
-        }
 
-        System.out.println(new Main().operate(op, text, key));
+
+        } catch (IOException e) {
+            System.out.println("An Exception was encountered while reading.");
+            System.out.println("Details: ");
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    private static void writeToFile(String s, OutputStream out) {
+        try (PrintWriter pw = new PrintWriter(out)) {
+            pw.print(s);
+            pw.flush();
+        }
 
     }
 
-    //Interface to call function
-    public String operate(String op, String text, int key) {
+    public static String operate(String op, String text, int key) {
         if (op.equals("enc")) {
             return encrypt(text, key);
         } else if (op.equals("dec")) {
             return encrypt(text, -key);
         } else {
-            return "Unknown operation";
+            return "Please provide a valid operation input.";
         }
+    }
+
+    public static void main(String[] args) {
+        String mode = "enc";
+        int key = 0;
+        String input = "";
+        boolean gotInput = false;
+        OutputStream out = System.out;
+        for (int i = 0; i < args.length; i++) {
+            switch (args[i]) {
+                case "-mode":
+                    mode = args[i + 1];
+                    break;
+                case "-key":
+                    key = Integer.parseInt(args[i + 1]);
+                    break;
+                case "-data":
+                    input = args[i + 1];
+                    gotInput = true;
+                    break;
+                case "-in":
+                    if (!gotInput) {
+                        File f = new File(args[i + 1]);
+                        input = readFromFile(f);
+                    }
+                    break;
+                case "-out":
+                    try {
+                        out = new FileOutputStream(new File(args[i + 1]));
+                    } catch (IOException e) {
+                        System.out.println("There was a problem in opening file for output");
+                        System.out.println("Details: ");
+                        e.printStackTrace();
+                    }
+            }
+        }
+        String toWrite = operate(mode, input, key);
+        writeToFile(toWrite, out);
+
     }
 }
