@@ -4,17 +4,14 @@ import java.io.*;
 import java.util.Scanner;
 
 public class Main {
-    @Deprecated
-    private static boolean isAlpha(char c) {
-        return c >= 'a' && c <= 'z';
-    }
 
+    @Deprecated
     private static String encrypt(String text, int key) {
         char[] input = text.toCharArray();
         char[] res = new char[text.length()];
-        for(int i=0; i<text.length(); i++) {
+        for (int i = 0; i < text.length(); i++) {
 
-                res[i] = (char)(input[i] + key);
+            res[i] = (char) (input[i] + key);
 
         }
         return String.valueOf(res);
@@ -44,17 +41,22 @@ public class Main {
 
     }
 
-    public static String operate(String op, String text, int key) {
+    public static String operate(String op, String text, int key, String alg) throws Exception {
+        Algorithm algorithm = AlgorithmFactory.getAlgo(alg);
+        if (algorithm == null) {
+            throw new Exception("Wrong algorithm argument provided");
+        }
         if (op.equals("enc")) {
-            return encrypt(text, key);
+            return algorithm.encrypt(text, key);
         } else if (op.equals("dec")) {
-            return encrypt(text, -key);
+            return algorithm.decrypt(text, key);
         } else {
             return "Please provide a valid operation input.";
         }
     }
 
     public static void main(String[] args) {
+        String alg = "shift";
         String mode = "enc";
         int key = 0;
         String input = "";
@@ -62,6 +64,9 @@ public class Main {
         OutputStream out = System.out;
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
+                case "-alg":
+                    alg = args[i + 1];
+                    break;
                 case "-mode":
                     mode = args[i + 1];
                     break;
@@ -88,8 +93,12 @@ public class Main {
                     }
             }
         }
-        String toWrite = operate(mode, input, key);
-        writeToFile(toWrite, out);
+        try {
+            String toWrite = operate(mode, input, key, alg);
+            writeToFile(toWrite, out);
+        } catch (Exception e) {
+            System.out.println("Exception occured: " + e.toString());
+        }
 
     }
 }

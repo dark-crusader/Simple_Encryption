@@ -201,6 +201,29 @@ files:
         }
     }
   learner_created: false
+- name: src/encryptdecrypt/protected.txt
+  visible: true
+  learner_created: true
+- name: output.txt
+  visible: true
+  text: 111122223333
+  learner_created: true
+- name: src/encryptdecrypt/road_to_treasure.txt
+  visible: true
+  text: Welcome to hyperskill!
+  learner_created: true
+- name: src/encryptdecrypt/Algorithm.java
+  visible: true
+  learner_created: true
+- name: src/encryptdecrypt/ShiftAlgorithm.java
+  visible: true
+  learner_created: true
+- name: src/encryptdecrypt/UnicodeAlgorithm.java
+  visible: true
+  learner_created: true
+- name: src/encryptdecrypt/AlgorithmFactory.java
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/46/stages/250/implement
-status: Unchecked
+status: Solved
 record: -1
